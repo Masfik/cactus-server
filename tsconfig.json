@@ -1,0 +1,16 @@
+{
+   "compilerOptions": {
+      "lib": [
+         "es6"
+      ],
+      "resolveJsonModule": true,
+      "esModuleInterop": true,
+      "target": "es2018",
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "outDir": "./build",
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "sourceMap": true
+   }
+}
