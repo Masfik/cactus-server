@@ -1,8 +1,18 @@
 import express from "express";
+import mongoose from 'mongoose';
+import { routes } from "./routes";
+import { config } from "../config";
 
 const app = express();
-const port = 3000;
+const port = config.web.port;
+const db = config.database;
 
-app.get('/', (req, res) => res.send('Gatto Ninja!'));
+app.use(routes);
 
-app.listen(port, () => console.log(`Initial commit. On port: ${port}!`));
+mongoose.connect(`mongodb://${db.host}:${db.port}/${db.name}`, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(async r => {
+    console.log(`[Database] Connected to ${r.connections[0].name}`);
+    app.listen(port, () => console.log(`[Web] Server started on port: ${port}!`));
+}).catch(console.log);
