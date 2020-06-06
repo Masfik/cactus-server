@@ -1,6 +1,6 @@
 import { Schema, Types } from "mongoose";
 import { $enum } from "ts-enum-util";
-import { UserGroup } from "../../models/member";
+import { UserGroup } from "../models/member";
 
 const required = true;
 

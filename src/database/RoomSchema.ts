@@ -1,4 +1,5 @@
-import { Schema, Types } from "mongoose";
+import { model, Schema, Types } from "mongoose";
+import { Room } from "../models/room";
 
 const required = true;
 
@@ -28,3 +29,5 @@ export const RoomSchema = new Schema({
     type: String,
   },
 });
+
+export const RoomModel = model<Room>("Room", RoomSchema);

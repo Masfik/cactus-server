@@ -1,9 +1,11 @@
 import { router as root } from "../routes/root";
-import { router as users } from "./users/users";
-import { router as rooms } from "./rooms/rooms";
+import { router as user } from "./user/user";
+import { router as room } from "./room/room";
+import { router as profile } from "./profile/profile";
 import { Router } from "express";
 
 export const routes = Router()
   .use("/", root)
-  .use("/users", users)
-  .use("/rooms", rooms);
+  .use("/user", user)
+  .use("/profile", profile)
+  .use("/room", room);
