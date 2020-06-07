@@ -2,13 +2,17 @@ import express from "express";
 import mongoose from "mongoose";
 import { routes } from "./routes";
 import { config } from "../config";
+import { auth } from "express-firebase-middleware";
+import { firebaseUser } from "./middlewares/firebase-user";
 
 const app = express();
 const port = config.web.port;
 const db = config.database;
 
-// Register routes
-app.use(routes);
+// Registering middleware
+app.use(auth); // Using Firebase auth
+app.use(firebaseUser); // Using Firebase User
+app.use(routes); // Using routes
 
 // Init global MongoDB connection
 mongoose
