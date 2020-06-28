@@ -9,4 +9,7 @@ export const config = {
     port: env.DB_PORT || 27017,
     name: env.DB_NAME || "cactus",
   },
+  firebase: {
+    databaseURL: env.FIREBASE_DATABASE_URL,
+  },
 };

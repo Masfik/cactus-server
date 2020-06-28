@@ -2,15 +2,15 @@ import express from "express";
 import mongoose from "mongoose";
 import { routes } from "./routes";
 import { config } from "../config";
-import { auth } from "express-firebase-middleware";
 import { firebaseUser } from "./middlewares/firebase-user";
+import { firebaseAuth } from "./middlewares/firebase-auth";
 
 const app = express();
 const port = config.web.port;
 const db = config.database;
 
 // Registering middleware
-app.use(auth); // Using Firebase auth
+app.use(firebaseAuth); // Using Firebase Auth
 app.use(firebaseUser); // Using Firebase User
 app.use(routes); // Using routes
 
