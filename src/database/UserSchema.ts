@@ -7,7 +7,7 @@ import { User } from "../models/user";
 const required = true;
 
 export const UserSchema = new Schema({
-  uuid: {
+  authUid: {
     type: String,
     required,
   },

@@ -4,20 +4,24 @@ import { UserModel as users } from "../../database/UserSchema";
 
 export const router = Router();
 
-router.use(firebaseUser);
+router.get("/", firebaseUser, async (req, res) => {
+  const { username, id } = req.query;
 
-router.get("/:username?", async (req, res) => {
-  const { username } = req.params;
-
-  if (username === null) {
-    res.status(400);
-    return;
-  }
-
-  const user = await users.findOne({ username });
-
-  if (user) res.json(user);
-  else res.status(404).json({ error: "username not found" });
+  if (username === null && id === null) {
+    res.json(res.locals.user);
+  } else if (username && id /* when two parameters are being used */) {
+    res.status(400).json({ error: "only one query parameter can be given" });
+  } else if (username !== null) {
+    users
+      .findOne({ username: <string>username })
+      .then(res.json)
+      .catch(() => res.status(404).json({ error: "user not found" }));
+  } else if (id !== null) {
+    users
+      .findOne({ _id: <string>id })
+      .then(res.json)
+      .catch(() => res.status(404).json({ error: "user not found" }));
+  } else res.status(400);
 });
 
 router.get("/search", async (req, res) => {

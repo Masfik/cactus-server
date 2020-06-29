@@ -4,9 +4,10 @@ import { Invitation } from "./invitation";
 import { UserStatus } from "./user-status";
 
 export interface User extends mongoose.Document {
-  username: string;
+  authUid: string;
   name: string;
   surname: string;
+  username: string;
   email?: string;
   password?: string;
   avatar?: string;

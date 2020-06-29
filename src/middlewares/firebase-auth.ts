@@ -23,7 +23,7 @@ export async function firebaseAuth(
     try {
       // Get the UID of the user by verifying token
       const { uid } = await admin.auth().verifyIdToken(idToken);
-      res.locals.firebaseUser = uid;
+      res.locals.firebaseUid = uid;
       next();
     } catch (e) {
       res.sendStatus(401);

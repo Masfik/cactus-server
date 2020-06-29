@@ -6,6 +6,8 @@ export async function firebaseUser(
   res: Response,
   next: NextFunction
 ) {
-  res.locals.user = await users.findOne({ uuid: res.locals.user.uid });
+  res.locals.user = await users
+    .findOne({ uuid: res.locals.firebaseUid })
+    .catch(() => null);
   next();
 }
