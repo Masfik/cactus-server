@@ -2,8 +2,11 @@ import { Router } from "express";
 import { UserModel as users } from "../../database/UserSchema";
 import { RoomModel as rooms } from "../../database/RoomSchema";
 import { Types } from "mongoose";
+import { firebaseUser } from "../../middlewares/firebase-user";
 
 export const router = Router();
+
+router.use(firebaseUser);
 
 router.get("/:roomId?", async (req, res) => {
   let roomId = req.params.roomId,

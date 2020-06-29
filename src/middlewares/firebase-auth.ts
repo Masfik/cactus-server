@@ -21,7 +21,7 @@ export async function firebaseAuth(
     const idToken = authorization.split(" ")[1];
 
     try {
-      // Get UID of the user by verifying token
+      // Get the UID of the user by verifying token
       const { uid } = await admin.auth().verifyIdToken(idToken);
       res.locals.firebaseUser = uid;
       next();

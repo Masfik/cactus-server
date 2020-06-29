@@ -6,7 +6,6 @@ export async function firebaseUser(
   res: Response,
   next: NextFunction
 ) {
-  res.locals.firebaseUser = res.locals.user;
   res.locals.user = await users.findOne({ uuid: res.locals.user.uid });
   next();
 }
