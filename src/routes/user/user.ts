@@ -25,17 +25,19 @@ router.get("/", firebaseUser, (req, res) => {
   } else res.status(400);
 });
 
-router.post("/", firebaseUser, async (req, res) => {
+router.post("/", firebaseUser, (req, res) => {
   if (res.locals.user /* If the user already exists in the database */) {
     res.status(400);
     return;
   }
 
   const { name, surname, username, email } = req.body;
+  const user = { name, surname, username, email };
 
   if (name && surname && username && email)
-    await users
-      .create(<User>{ name, surname, username, email })
+    users
+      .create(<User>user)
+      .then(() => res.json(user))
       .catch(() => res.status(400));
   else res.status(400).json({ error: "invalid json data" });
 });

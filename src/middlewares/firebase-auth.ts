@@ -15,7 +15,7 @@ export async function firebaseAuth(
 ) {
   const { authorization } = req.headers;
 
-  if (authorization === null) res.sendStatus(401);
+  if (authorization === undefined) res.sendStatus(401);
   else {
     // Separate the actual token from the 'Bearer <token>' string
     const idToken = authorization.split(" ")[1];
