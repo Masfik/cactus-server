@@ -7,25 +7,32 @@ import { searchValidation } from "./search.middleware";
 
 export const router = Router();
 
+//------------------------------------------------------------------------------
+// GET /USER - READ USER DATA
+//------------------------------------------------------------------------------
+
 router.get("/", firebaseUser, (req, res) => {
   const { username, id } = req.query;
 
-  if (username === null && id === null) {
-    res.json(res.locals.user);
-  } else if (username && id /* when two parameters are being used */) {
+  if (username === null && id === null) res.json(res.locals.user);
+  else if (username && id /* when two parameters are being used */)
     res.status(400).json({ error: "only one query parameter can be given" });
-  } else if (username !== null) {
+  else if (username !== null)
     users
       .findOne({ username: <string>username })
       .then(res.json)
       .catch(() => res.status(404).json({ error: "user not found" }));
-  } else if (id !== null) {
+  else if (id !== null)
     users
       .findOne({ _id: <string>id })
       .then(res.json)
       .catch(() => res.status(404).json({ error: "user not found" }));
-  } else res.status(400);
+  else res.status(400);
 });
+
+//------------------------------------------------------------------------------
+// POST /USER - USER CREATION
+//------------------------------------------------------------------------------
 
 router.post("/", firebaseUser, signUpValidation, (req, res) => {
   const { id, name, surname, username, email } = req.body;
@@ -36,6 +43,10 @@ router.post("/", firebaseUser, signUpValidation, (req, res) => {
     .then(() => res.status(201).json(user))
     .catch(() => res.status(400));
 });
+
+//------------------------------------------------------------------------------
+// GET /USER/SEARCH - FIND USERS BY USERNAME
+//------------------------------------------------------------------------------
 
 router.get("/search", searchValidation, async (req, res) => {
   const { query } = req.query;

@@ -10,7 +10,7 @@ const app = express();
 const port = config.web.port;
 const db = config.database;
 
-// Registering middleware
+// Registering global middleware
 app.use(bodyParser.json()); // Parse the body automatically
 app.use(cors()); // Accept cors
 app.use(firebaseAuth); // Using Firebase Auth
@@ -22,7 +22,7 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(async (r) => {
+  .then((r) => {
     console.info(`[Database] Connected to ${r.connections[0].name}`);
     app.listen(port, () =>
       console.info(`[Web] Server started on port: ${port}!`)

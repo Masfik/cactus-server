@@ -15,5 +15,7 @@ module.exports = {
     ecmaVersion: 11,
   },
   plugins: ["@typescript-eslint"],
-  rules: {},
+  rules: {
+    "max-len": ["error", { code: 80 }],
+  },
 };
