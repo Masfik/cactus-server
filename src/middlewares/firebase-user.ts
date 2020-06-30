@@ -1,5 +1,6 @@
 import { UserModel as users } from "../database/UserSchema";
 import { NextFunction, Request, Response } from "express";
+import { User } from "../models/user";
 
 export async function firebaseUser(
   req: Request,
@@ -7,7 +8,7 @@ export async function firebaseUser(
   next: NextFunction
 ) {
   res.locals.user = await users
-    .findOne({ uuid: res.locals.firebaseUid })
+    .findOne(<User>{ authUid: res.locals.firebaseUid })
     .catch(() => null);
   next();
 }

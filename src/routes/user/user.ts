@@ -2,6 +2,8 @@ import { Router } from "express";
 import { firebaseUser } from "../../middlewares/firebase-user";
 import { UserModel as users } from "../../database/UserSchema";
 import { User } from "../../models/user";
+import { signUpValidation } from "./sign-up.middleware";
+import { searchValidation } from "./search.middleware";
 
 export const router = Router();
 
@@ -25,36 +27,23 @@ router.get("/", firebaseUser, (req, res) => {
   } else res.status(400);
 });
 
-router.post("/", firebaseUser, (req, res) => {
-  if (res.locals.user /* If the user already exists in the database */) {
-    res.status(400);
-    return;
-  }
-
-  const { name, surname, username, email } = req.body;
+router.post("/", firebaseUser, signUpValidation, (req, res) => {
+  const { id, name, surname, username, email } = req.body;
   const user = { name, surname, username, email };
 
-  if (name && surname && username && email)
-    users
-      .create(<User>user)
-      .then(() => res.json(user))
-      .catch(() => res.status(400));
-  else res.status(400).json({ error: "invalid json data" });
+  users
+    .create(<User>{ authUid: id, ...user })
+    .then(() => res.status(201).json(user))
+    .catch(() => res.status(400));
 });
 
-router.get("/search", async (req, res) => {
+router.get("/search", searchValidation, async (req, res) => {
   const { query } = req.query;
 
-  if (query === null) {
-    res.status(400).json({ error: "query parameter is required" });
-    return;
-  } else if (query.length > 5) {
-    res.status(400).json({ error: "username must be at least 5 characters" });
-    return;
-  }
-
   // Find users by username if the first few characters match some of the records
-  const usersFound = await users.find({ username: { $regex: `${query}.*` } });
+  const usersFound = await users
+    .find({ username: { $regex: `${query}.*` } })
+    .catch(() => []);
 
-  res.json(usersFound || []);
+  res.json(usersFound);
 });
