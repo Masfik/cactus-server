@@ -2,7 +2,7 @@ import { Router } from "express";
 import { UserModel as users } from "../../database/UserSchema";
 import { RoomModel as rooms } from "../../database/RoomSchema";
 import { Types } from "mongoose";
-import { firebaseUser } from "../../middlewares/firebase-user";
+import { firebaseUser } from "../../middleware/firebase-user";
 
 export const router = Router();
 

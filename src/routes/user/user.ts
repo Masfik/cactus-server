@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { firebaseUser } from "../../middlewares/firebase-user";
+import { firebaseUser } from "../../middleware/firebase-user";
 import { UserModel as users } from "../../database/UserSchema";
 import { User } from "../../models/user";
 import { signUpValidation } from "./sign-up.middleware";
 import { searchValidation } from "./search.middleware";
+import { requestValidation } from "./friend-request.middleware";
+import { Invitation } from "../../models/invitation";
 
 export const router = Router();
 
@@ -29,6 +31,27 @@ router.get("/", firebaseUser, (req, res) => {
       .catch(() => res.status(404).json({ error: "user not found" }));
   else res.status(400);
 });
+
+//------------------------------------------------------------------------------
+// POST /USER/:id/friendRequest - REQUEST FRIEND
+//------------------------------------------------------------------------------
+
+router.post(
+  "/:id/friendRequest",
+  firebaseUser,
+  requestValidation,
+  async (req, res) => {
+    const user = await users.findOne({ _id: req.params.id }).catch(() => null);
+
+    if (user === null) return res.status(404).json({ error: "user not found" });
+
+    user.invitations.push(<Invitation>{
+      type: "friend",
+      user: res.locals.user,
+    });
+    user.save();
+  }
+);
 
 //------------------------------------------------------------------------------
 // POST /USER - USER CREATION

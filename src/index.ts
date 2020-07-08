@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import { routes } from "./routes";
 import { config } from "../config";
-import { firebaseAuth } from "./middlewares/firebase-auth";
+import { firebaseAuth } from "./middleware/firebase-auth";
 import cors from "cors";
 import bodyParser from "body-parser";
 
