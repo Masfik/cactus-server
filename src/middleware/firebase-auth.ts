@@ -1,12 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import admin, { ServiceAccount } from "firebase-admin";
-import serviceAccount from "../../firebase-secret.json";
-import { config } from "../../config";
-
-admin.initializeApp({
-  credential: admin.credential.cert(<ServiceAccount>serviceAccount),
-  databaseURL: config.firebase.databaseURL,
-});
+import { FirebaseAdmin } from "../services/auth/firebase-admin";
 
 export async function firebaseAuth(
   req: Request,
@@ -20,13 +13,12 @@ export async function firebaseAuth(
     // Separate the actual token from the 'Bearer <token>' string
     const idToken = authorization.split(" ")[1];
 
-    try {
-      // Get the UID of the user by verifying token
-      const { uid } = await admin.auth().verifyIdToken(idToken);
-      res.locals.firebaseUid = uid;
-      next();
-    } catch (e) {
-      res.sendStatus(401);
-    }
+    // Get the UID of the user by verifying token
+    FirebaseAdmin.verifyIdToken(idToken)
+      .then((uid) => {
+        res.locals.firebaseUid = uid;
+        next();
+      })
+      .catch(() => res.sendStatus(401));
   }
 }

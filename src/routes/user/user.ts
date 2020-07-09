@@ -33,7 +33,7 @@ router.get("/", firebaseUser, (req, res) => {
 });
 
 //------------------------------------------------------------------------------
-// POST /USER/:id/friendRequest - REQUEST FRIEND
+// POST /USER/:id/friendRequest - SEND FRIEND REQUEST
 //------------------------------------------------------------------------------
 
 router.post(
@@ -41,15 +41,20 @@ router.post(
   firebaseUser,
   requestValidation,
   async (req, res) => {
-    const user = await users.findOne({ _id: req.params.id }).catch(() => null);
-
-    if (user === null) return res.status(404).json({ error: "user not found" });
-
-    user.invitations.push(<Invitation>{
-      type: "friend",
-      user: res.locals.user,
-    });
-    user.save();
+    users
+      .update(
+        { _id: req.params.id },
+        {
+          $PUSH: {
+            invitations: <Invitation>{
+              type: "friend",
+              user: res.locals.user,
+            },
+          },
+        }
+      )
+      .then(() => res.status(200))
+      .catch(() => res.status(404).json({ error: "user not found" }));
   }
 );
 
