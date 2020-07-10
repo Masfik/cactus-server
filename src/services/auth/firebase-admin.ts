@@ -7,7 +7,9 @@ admin.initializeApp({
   databaseURL: config.firebase.databaseURL,
 });
 
-// Very basic non-instantiable class to verify Firebase token
+/**
+ * A very basic non-instantiable class to verify a Firebase token.
+ */
 export abstract class FirebaseAdmin {
   static async verifyIdToken(token: string): Promise<string> {
     const { uid } = await admin.auth().verifyIdToken(token);

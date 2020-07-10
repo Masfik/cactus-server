@@ -33,32 +33,6 @@ router.get("/", firebaseUser, (req, res) => {
 });
 
 //------------------------------------------------------------------------------
-// POST /USER/:id/friendRequest - SEND FRIEND REQUEST
-//------------------------------------------------------------------------------
-
-router.post(
-  "/:id/friendRequest",
-  firebaseUser,
-  requestValidation,
-  async (req, res) => {
-    users
-      .update(
-        { _id: req.params.id },
-        {
-          $PUSH: {
-            invitations: <Invitation>{
-              type: "friend",
-              user: res.locals.user,
-            },
-          },
-        }
-      )
-      .then(() => res.status(200))
-      .catch(() => res.status(404).json({ error: "user not found" }));
-  }
-);
-
-//------------------------------------------------------------------------------
 // POST /USER - USER CREATION
 //------------------------------------------------------------------------------
 
@@ -86,3 +60,29 @@ router.get("/search", searchValidation, async (req, res) => {
 
   res.json(usersFound);
 });
+
+//------------------------------------------------------------------------------
+// POST /USER/:id/friendRequest - SEND FRIEND REQUEST
+//------------------------------------------------------------------------------
+
+router.post(
+  "/:id/friendRequest",
+  firebaseUser,
+  requestValidation,
+  async (req, res) => {
+    users
+      .update(
+        { _id: req.params.id },
+        {
+          $PUSH: {
+            invitations: <Invitation>{
+              type: "friend",
+              user: res.locals.user,
+            },
+          },
+        }
+      )
+      .then(() => res.status(200))
+      .catch(() => res.status(404).json({ error: "user not found" }));
+  }
+);
