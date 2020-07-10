@@ -16,12 +16,12 @@ export type Clients<T> = {
  */
 export abstract class WebSocketService<T, U extends EventEmitter> {
   protected handlers: U[] = [];
-  protected clients: Clients<T>;
+  protected clients: Clients<T> = {};
 
   /**
    * Where the WS server starts listening to connections.
    */
-  abstract start(): void;
+  abstract listen(): void;
 
   protected emit(event: string, from: User, payload) {
     this.handlers.forEach((handler) => handler.emit(event, from, payload));

@@ -39,7 +39,8 @@
     "firebase-admin": "^8.12.1",
     "mongoose": "^5.8.11",
     "mongoose-id-validator": "^0.6.0",
-    "ts-enum-util": "^4.0.1"
+    "ts-enum-util": "^4.0.1",
+    "ws": "^7.3.1"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
