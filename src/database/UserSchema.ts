@@ -75,12 +75,13 @@ export const UserSchema = new Schema({
   },
 });
 
-UserSchema.statics.getByUUID = function (cb) {};
-
 UserSchema.plugin(mongoIdValidator.getConstructor);
 
+// Adding declarations for the custom methods created
 interface UserModel extends Model<User> {
   getByUUID(uuid: string): Promise<User>;
+  sanitizeAuthUser(): User;
+  sanitizeUser(): User;
 }
 
 export const UserModel = <UserModel>model<User>("User", UserSchema);

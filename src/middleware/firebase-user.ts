@@ -9,6 +9,7 @@ export async function firebaseUser(
 ) {
   res.locals.user = await users
     .findOne(<User>{ authUid: res.locals.firebaseUid })
+    .then((user) => user.sanitizeAuthUser())
     .catch(() => null);
   next();
 }

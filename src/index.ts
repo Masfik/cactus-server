@@ -25,7 +25,7 @@ app.use(cors()); // Accept cors
 app.use(firebaseAuthExpress); // Using Firebase Auth
 app.use(routes); // Using routes
 
-// Creating a HTTP Server from the Express instance (required for the ws lib)
+// Creating an HTTP Server from the Express instance (required for the ws lib)
 const httpServer = http.createServer(app);
 
 //------------------------------------------------------------------------------

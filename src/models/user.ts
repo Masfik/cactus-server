@@ -20,4 +20,6 @@ export interface User extends mongoose.Document {
   currentRoom?: mongoose.Types.ObjectId; // Room;
 
   getByUUID(uuid: string): User;
+  sanitizeAuthUser(): User;
+  sanitizeUser(): User;
 }

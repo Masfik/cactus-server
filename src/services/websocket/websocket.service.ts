@@ -6,7 +6,7 @@ import { User } from "../../models/user";
  * The type T refers to the type of WebSocket client used, and the ID is always
  * a string.
  */
-export type Clients<T> = {
+type Clients<T> = {
   [id: string]: T;
 };
 
@@ -23,6 +23,14 @@ export abstract class WebSocketService<T, U extends EventEmitter> {
    */
   abstract listen(): void;
 
+  /**
+   * A protected function that emits an event to all registered handlers.
+   *
+   * @see useHandler
+   * @param event
+   * @param from - The {@link User} who sent the WebSocket message.
+   * @param payload - data received from the client.
+   */
   protected emit(event: string, from: User, payload) {
     this.handlers.forEach((handler) => handler.emit(event, from, payload));
   }

@@ -22,12 +22,12 @@ router.get("/", firebaseUser, (req, res) => {
   else if (username !== undefined)
     users
       .findOne({ username: <string>username })
-      .then(res.json)
+      .then((user) => res.json(user.sanitizeUser()))
       .catch(() => res.status(404).json({ error: "user not found" }));
   else if (id !== undefined)
     users
       .findOne({ _id: <string>id })
-      .then(res.json)
+      .then((user) => res.json(user.sanitizeUser()))
       .catch(() => res.status(404).json({ error: "user not found" }));
   else res.status(400);
 });
@@ -53,9 +53,10 @@ router.post("/", firebaseUser, signUpValidation, (req, res) => {
 router.get("/search", searchValidation, async (req, res) => {
   const { query } = req.query;
 
-  // Find users by username if the first few characters match some of the records
+  // Find users by the username if the first few characters match some records
   const usersFound = await users
     .find({ username: { $regex: `${query}.*` } })
+    .then((users) => users.map((u) => u.sanitizeUser())) // <- Sanitizing list
     .catch(() => []);
 
   res.json(usersFound);
@@ -69,7 +70,7 @@ router.post(
   "/:id/friendRequest",
   firebaseUser,
   requestValidation,
-  async (req, res) => {
+  (req, res) => {
     users
       .update(
         { _id: req.params.id },

@@ -8,5 +8,8 @@ export async function requestValidation(
   if (req.params.id === undefined)
     return res.status(400).json({ error: "no userId specified" });
 
+  if (res.locals.user._id === req.params.id)
+    return res.status(400).json({ error: "self-request" });
+
   next();
 }
