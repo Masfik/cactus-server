@@ -4,7 +4,8 @@ import { User } from "./user";
  * The UserGroup of the user. Ascending from most privileges to least privileges.
  */
 export enum UserGroup {
-  /* THE ORDER IS IMPORTANT: if new groups are required, always append them as last. */
+  // THE ORDER IS IMPORTANT:
+  // If new groups are required, always append them as last.
 
   OWNER,
   ADMIN,
@@ -14,7 +15,8 @@ export enum UserGroup {
 
 export interface Member extends User {
   /**
-   * Permission group of the user. By default, members aren't assigned to a specific one so the group can be null.
+   * Permission group of the user. By default, members aren't assigned to a
+   * specific one, so the group can be undefined.
    */
   userGroup?: UserGroup;
 }

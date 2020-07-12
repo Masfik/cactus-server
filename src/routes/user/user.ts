@@ -72,18 +72,18 @@ router.post(
   requestValidation,
   (req, res) => {
     users
-      .update(
+      .updateOne(
         { _id: req.params.id },
         {
-          $PUSH: {
+          $push: {
             invitations: <Invitation>{
-              type: "friend",
-              user: res.locals.user,
+              category: "friend",
+              user: res.locals.user.id,
             },
           },
         }
       )
-      .then(() => res.status(200))
+      .then(() => res.status(200).json({ ok: "success!" }))
       .catch(() => res.status(404).json({ error: "user not found" }));
   }
 );

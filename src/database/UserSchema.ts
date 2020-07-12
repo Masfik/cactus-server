@@ -65,7 +65,24 @@ export const UserSchema = new Schema({
     default: [],
   },
   invitations: {
-    type: [{ type: Types.ObjectId, ref: "Invitation" }],
+    type: [
+      {
+        category: {
+          type: String,
+          enum: ["friend", "room"],
+          required,
+        },
+        user: {
+          type: Types.ObjectId,
+          ref: "User",
+        },
+        room: {
+          type: Types.ObjectId,
+          ref: "Room",
+        },
+        description: String,
+      },
+    ],
     required,
     default: [],
   },
@@ -74,6 +91,9 @@ export const UserSchema = new Schema({
     ref: "Room",
   },
 });
+
+// Importing UserSchema methods
+import "./UserSchema.methods";
 
 UserSchema.plugin(mongoIdValidator.getConstructor);
 

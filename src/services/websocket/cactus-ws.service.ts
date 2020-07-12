@@ -37,7 +37,8 @@ export class CactusWsService extends WebSocketService<
         .findOne(<User>{ authUid: req.firebaseUid })
         .catch(() => null);
 
-      if (!user) return;
+      // Closing the connection if the user returned from the DB is null
+      if (!user) return clientSocket.close(401, "unauthorized");
 
       // Assigning an ID to the clientSocket
       clientSocket.id = user.id;
@@ -46,7 +47,7 @@ export class CactusWsService extends WebSocketService<
 
       console.info(`[WebSocket] ${req.socket.remoteAddress} connected.`);
 
-      // Emitting the Connection event
+      // Emitting the Connection event (no payload required)
       this.emit("Connection", user, null);
 
       // Any form of data received from the client
