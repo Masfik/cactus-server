@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { UserModel as users } from "../../database/UserSchema";
-import { RoomModel as rooms } from "../../database/RoomSchema";
+import { UserModel as users } from "../../database/user/UserSchema";
+import { RoomModel as rooms } from "../../database/room/RoomSchema";
 import { Types } from "mongoose";
 import { firebaseUser } from "../../middleware/firebase-user";
 

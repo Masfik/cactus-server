@@ -45,6 +45,7 @@ mongoose
   .connect(`mongodb://${db.host}:${db.port}/${db.name}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useFindAndModify: false,
   })
   .then((r) => {
     console.info(`[Database] Connected to ${r.connections[0].name}.`);

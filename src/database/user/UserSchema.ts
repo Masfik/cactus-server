@@ -1,8 +1,8 @@
 import { model, Model, Schema, Types } from "mongoose";
 import { $enum } from "ts-enum-util";
-import { UserStatus } from "../models/user-status";
+import { UserStatus } from "../../models/user-status";
 import * as mongoIdValidator from "mongoose-id-validator";
-import { User } from "../models/user";
+import { User } from "../../models/user";
 
 const required = true;
 
@@ -10,6 +10,9 @@ export const UserSchema = new Schema({
   authUid: {
     type: String,
     required,
+    // Remove from the result by default:
+    // Use Users.find().select("+authId") to include
+    select: false,
   },
   username: {
     type: String,
@@ -28,6 +31,7 @@ export const UserSchema = new Schema({
   },
   password: {
     type: String,
+    select: false, // Remove from the result by default:
   },
   avatar: {
     type: String,

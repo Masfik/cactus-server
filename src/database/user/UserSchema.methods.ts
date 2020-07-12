@@ -1,4 +1,4 @@
-import { User } from "../models/user";
+import { User } from "../../models/user";
 import { UserSchema } from "./UserSchema";
 
 UserSchema.statics.getByUUID = function (cb) {};
@@ -12,10 +12,7 @@ UserSchema.method("sanitizeAuthUser", function () {
   // "Renaming" _id to id
   user.id = user._id;
   delete user._id;
-
   delete user.__v;
-  delete user.authUid;
-  delete user.password;
 
   return user;
 });
@@ -23,19 +20,25 @@ UserSchema.method("sanitizeAuthUser", function () {
 /**
  * Method to automatically return sanitized data regarding other users.
  */
-UserSchema.method("sanitizeUser", function () {
+UserSchema.method("sanitizeUser", function (
+  options: {
+    excludeFriends: boolean;
+  } = {
+    excludeFriends: false,
+  }
+) {
   const user: User = this.toObject();
 
   user.id = user._id;
   delete user._id;
   delete user.__v;
-  delete user.authUid;
   delete user.email;
-  delete user.password;
   delete user.rooms; // TODO: in the future, common rooms could be added
   delete user.preferences;
   delete user.invitations;
   delete user.blocked;
+
+  if (options.excludeFriends) delete user.friends;
 
   return user;
 });

@@ -2,6 +2,7 @@ import * as mongoose from "mongoose";
 import { Preferences } from "./preferences";
 import { Invitation } from "./invitation";
 import { UserStatus } from "./user-status";
+import { Room } from "./room";
 
 export interface User extends mongoose.Document {
   authUid: string;
@@ -13,13 +14,14 @@ export interface User extends mongoose.Document {
   avatar?: string;
   status: UserStatus;
   preferences: Preferences;
-  friends: User[];
-  blocked: User[];
-  rooms: mongoose.Types.ObjectId[]; // Room[];
+  friends: User[] | mongoose.Types.ObjectId[];
+  blocked: User[] | mongoose.Types.ObjectId[];
+  rooms: Room[] | mongoose.Types.ObjectId[];
   invitations: Invitation[];
-  currentRoom?: mongoose.Types.ObjectId; // Room;
+  currentRoom?: Room | mongoose.Types.ObjectId;
 
   getByUUID(uuid: string): User;
   sanitizeAuthUser(): User;
-  sanitizeUser(): User;
+
+  sanitizeUser(options?: { excludeFriends: boolean }): User;
 }

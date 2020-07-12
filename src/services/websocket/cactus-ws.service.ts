@@ -3,7 +3,7 @@ import { CactusEventEmitter } from "./events/cactus-events";
 import * as http from "http";
 import * as https from "https";
 import * as WebSocket from "ws";
-import { UserModel as users } from "../../database/UserSchema";
+import { UserModel as users } from "../../database/user/UserSchema";
 import { User } from "../../models/user";
 
 export class CactusWsService extends WebSocketService<

@@ -1,4 +1,4 @@
-import { User } from "./user";
+import mongoose from "mongoose";
 
 /**
  * The UserGroup of the user. Ascending from most privileges to least privileges.
@@ -13,7 +13,9 @@ export enum UserGroup {
   STREAMER,
 }
 
-export interface Member extends User {
+export interface Member {
+  user: mongoose.Types.ObjectId; // User
+
   /**
    * Permission group of the user. By default, members aren't assigned to a
    * specific one, so the group can be undefined.
