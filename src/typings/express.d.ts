@@ -4,6 +4,7 @@ declare module "express" {
   export interface Response {
     locals: {
       user: User;
+      userPopulated: User;
       firebaseUid: string;
     };
   }

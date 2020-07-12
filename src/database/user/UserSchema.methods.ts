@@ -1,5 +1,6 @@
 import { User } from "../../models/user";
 import { UserSchema } from "./UserSchema";
+import { Room } from "../../models/room";
 
 UserSchema.statics.getByUUID = function (cb) {};
 
@@ -13,6 +14,12 @@ UserSchema.method("sanitizeAuthUser", function () {
   user.id = user._id;
   delete user._id;
   delete user.__v;
+
+  // Sanitizing all friends
+  user.friends = this.friends.map((friend: User) => friend.sanitizeUser());
+
+  // Sanitizing all rooms
+  user.rooms = this.rooms.map((room: Room) => room.sanitizeRoom());
 
   return user;
 });
@@ -39,6 +46,7 @@ UserSchema.method("sanitizeUser", function (
   delete user.blocked;
 
   if (options.excludeFriends) delete user.friends;
+  else user.friends = this.friends?.map((user: User) => user.sanitizeUser());
 
   return user;
 });
