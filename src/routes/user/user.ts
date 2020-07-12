@@ -1,11 +1,13 @@
-import { Router } from "express";
+import { Response, Router } from "express";
 import { firebaseUser } from "../../middleware/firebase-user";
-import { UserModel as users } from "../../database/UserSchema";
+import { UserModel as users } from "../../database/user/UserSchema";
+import { RoomModel as rooms } from "../../database/room/RoomSchema";
 import { User } from "../../models/user";
 import { signUpValidation } from "./sign-up.middleware";
 import { searchValidation } from "./search.middleware";
 import { requestValidation } from "./friend-request.middleware";
-import { Invitation } from "../../models/invitation";
+import { Room } from "../../models/room";
+import { populateUser } from "./populated-user.middleware";
 
 export const router = Router();
 
@@ -13,24 +15,30 @@ export const router = Router();
 // GET /USER - READ USER DATA
 //------------------------------------------------------------------------------
 
-router.get("/", firebaseUser, (req, res) => {
-  const { username, id } = req.query;
+router.get(
+  "/",
+  firebaseUser,
+  populateUser,
+  (req, res: Response<User | any>) => {
+    const { username, id } = req.query;
 
-  if (username === undefined && id === undefined) res.json(res.locals.user);
-  else if (username && id /* when two parameters are being used */)
-    res.status(400).json({ error: "only one query parameter can be given" });
-  else if (username !== undefined)
-    users
-      .findOne({ username: <string>username })
-      .then((user) => res.json(user.sanitizeUser()))
-      .catch(() => res.status(404).json({ error: "user not found" }));
-  else if (id !== undefined)
-    users
-      .findOne({ _id: <string>id })
-      .then((user) => res.json(user.sanitizeUser()))
-      .catch(() => res.status(404).json({ error: "user not found" }));
-  else res.status(400);
-});
+    if (username === undefined && id === undefined)
+      res.json(res.locals.userPopulated);
+    else if (username && id /* when two parameters are being used */)
+      res.status(400).json({ error: "only one query parameter can be given" });
+    else if (username !== undefined)
+      users
+        .findOne({ username: <string>username })
+        .then((user) => res.json(user.sanitizeUser()))
+        .catch(() => res.status(404).json({ error: "user not found" }));
+    else if (id !== undefined)
+      users
+        .findOne({ _id: <string>id })
+        .then((user) => res.json(user.sanitizeUser()))
+        .catch(() => res.status(404).json({ error: "user not found" }));
+    else res.status(400);
+  }
+);
 
 //------------------------------------------------------------------------------
 // POST /USER - USER CREATION
@@ -70,8 +78,49 @@ router.post(
   "/:id/friendRequest",
   firebaseUser,
   requestValidation,
-  (req, res) => {
-    users
+  async (req, res) => {
+    const authUser: User = res.locals.user;
+
+    try {
+      // Find user and add the authUser as friend
+      const user = await users.findOneAndUpdate(
+        { _id: req.params.id },
+        {
+          $push: {
+            friends: authUser.id,
+          },
+        }
+      );
+
+      // Creating a new room
+      const room = await rooms.create(<Room>{
+        name: `${authUser.name} and ${user.name}`,
+        members: [{ user: authUser.id }, { user: user.id }],
+      });
+
+      // Adding the user and room to their respective list
+      await users.updateOne(
+        { _id: authUser.id },
+        {
+          $push: {
+            friends: user.id,
+            rooms: room.id,
+          },
+        }
+      );
+
+      // Adding the newly-created room to the list
+      user.rooms.push(room.id);
+      await user.save();
+
+      res.status(200).json({ ok: true });
+    } catch (e) {
+      console.error(e);
+      res.status(500).json({ error: "internal server error" });
+    }
+
+    // TODO: The invitation system has been disabled temporarily
+    /*users
       .updateOne(
         { _id: req.params.id },
         {
@@ -84,6 +133,6 @@ router.post(
         }
       )
       .then(() => res.status(200).json({ ok: "success!" }))
-      .catch(() => res.status(404).json({ error: "user not found" }));
+      .catch(() => res.status(404).json({ error: "user not found" }));*/
   }
 );
