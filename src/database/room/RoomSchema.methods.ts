@@ -17,6 +17,7 @@ RoomSchema.method("sanitizeRoom", function () {
   room.members = this.members.map((member: Member) => {
     const sanitizedUser = (<User>member.user).sanitizeUser();
 
+    // The client requires directly a payload that includes the User object
     return <SanitizedMember>{
       ...sanitizedUser,
       userGroup: member.userGroup,

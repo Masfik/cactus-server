@@ -64,7 +64,7 @@ router.get("/search", searchValidation, async (req, res) => {
   // Find users by the username if the first few characters match some records
   const usersFound = await users
     .find({ username: { $regex: `${query}.*` } })
-    .then((users) => users.map((u) => u.sanitizeUser())) // <- Sanitizing list
+    .then((found) => found.map((u) => u.sanitizeUser({ excludeFriends: true })))
     .catch(() => []);
 
   res.json(usersFound);
@@ -79,6 +79,8 @@ router.post(
   firebaseUser,
   requestValidation,
   async (req, res) => {
+    // TODO: currently, we automatically add the user as friend.
+
     const authUser: User = res.locals.user;
 
     try {
@@ -109,7 +111,7 @@ router.post(
         }
       );
 
-      // Adding the newly-created room to the list
+      // Adding the newly-created room to the room list of the user
       user.rooms.push(room.id);
       await user.save();
 

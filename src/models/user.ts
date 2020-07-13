@@ -3,6 +3,7 @@ import { Preferences } from "./preferences";
 import { Invitation } from "./invitation";
 import { UserStatus } from "./user-status";
 import { Room } from "./room";
+import { Model } from "mongoose";
 
 export interface User extends mongoose.Document {
   authUid: string;
@@ -14,9 +15,9 @@ export interface User extends mongoose.Document {
   avatar?: string;
   status: UserStatus;
   preferences: Preferences;
-  friends: User[] | mongoose.Types.ObjectId[];
+  friends: Model<User>[];
   blocked: User[] | mongoose.Types.ObjectId[];
-  rooms: Room[] | mongoose.Types.ObjectId[];
+  rooms: Model<Room>[];
   invitations: Invitation[];
   currentRoom?: Room | mongoose.Types.ObjectId;
 

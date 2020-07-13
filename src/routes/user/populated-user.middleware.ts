@@ -6,7 +6,7 @@ export function populateUser(req: Request, res: Response, next: NextFunction) {
       path: "friends",
       populate: {
         path: "friends", // <- populate friends of friends
-        select: "-friends", // <- excluding the friends of friends of friends
+        select: "-friends", // <- excluding friends of friends of friends (whew)
       },
     })
     .populate({
@@ -18,8 +18,12 @@ export function populateUser(req: Request, res: Response, next: NextFunction) {
     })
     .execPopulate()
     .then((user) => {
+      // Assigning the sanitized user to res.locals.userPopulated field
       res.locals.userPopulated = user.sanitizeAuthUser();
       next();
     })
-    .catch(() => res.status(500).json({ error: "internal server error" }));
+    .catch((e) => {
+      console.error(e);
+      res.status(500).json({ error: "internal server error" });
+    });
 }
