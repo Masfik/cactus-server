@@ -10,6 +10,8 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { CactusWsService } from "./services/websocket/cactus-ws.service";
 import * as http from "http";
+import { roomEventHandler } from "./ws-events/room.events";
+import { genericEventHandler } from "./ws-events/generic.events";
 
 //------------------------------------------------------------------------------
 // HTTP SERVER: EXPRESS
@@ -35,7 +37,8 @@ const httpServer = http.createServer(app);
 const wsServer = new CactusWsService(httpServer, firebaseAuthWS);
 
 // Registering WebSocket event handlers
-wsServer.useHandler();
+wsServer.useHandler(genericEventHandler);
+wsServer.useHandler(roomEventHandler);
 
 //------------------------------------------------------------------------------
 // APP INITIALISATION: Mongoose -> HTTP server -> WebSocket server
