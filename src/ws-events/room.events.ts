@@ -65,15 +65,36 @@ roomEventHandler.on("Close", async (ctx, from) => {
 });
 
 roomEventHandler.on("IceCandidate", async (ctx, from, payload) => {
-  console.log(payload);
+  await forwardRTCData(ctx, from, payload);
+});
 
+roomEventHandler.on("Offer", async (ctx, from, payload) => {
+  await forwardRTCData(ctx, from, payload);
+});
+
+roomEventHandler.on("Answer", async (ctx, from, payload) => {
+  await forwardRTCData(ctx, from, payload);
+});
+
+/**
+ * Forwards RTC messages to clients (except the sender).
+ *
+ * @param ctx
+ * @param from
+ * @param payload
+ */
+async function forwardRTCData(ctx, from: User, payload) {
   try {
     const room = await rooms.findById(onlineUsersRooms[from.id]);
-    const viewersIDs = room.viewers;
-    /*.filter((u) => u.id !== from.id)*/
+    const others = room.viewers.filter((id) => id.toString() !== from.id);
 
-    console.log(viewersIDs);
+    // TODO: improve typings
+    ctx.send(<string[]>(<unknown>others), payload);
+    console.info(
+      `[WebSocket]${from.username} sent: ${JSON.stringify(payload)}`
+    );
+    console.info("\n\n");
   } catch (e) {
     console.error(e);
   }
-});
+}
