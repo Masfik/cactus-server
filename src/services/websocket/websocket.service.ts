@@ -10,7 +10,7 @@ type Clients<T> = {
   [id: string]: T;
 };
 
-type Payload = {
+export type Payload = {
   event: string;
   data: object | string;
 };
@@ -34,11 +34,17 @@ export abstract class WebSocketService<T, U extends EventEmitter> {
    *
    * @see useHandler
    * @param event
+   * @param ctx - The context from which the handler can access {@link send}
    * @param from - The {@link User} who sent the WebSocket message.
    * @param payload - data received from the client.
    */
-  protected emit(event: string, from: User, payload: Payload) {
-    this.handlers.forEach((handler) => handler.emit(event, from, payload));
+  protected emit(
+    event: string,
+    ctx: WebSocketService<T, U>,
+    from: User,
+    payload: Payload
+  ) {
+    this.handlers.forEach((handler) => handler.emit(event, ctx, from, payload));
   }
 
   /**
@@ -51,4 +57,12 @@ export abstract class WebSocketService<T, U extends EventEmitter> {
   useHandler(...handlers: U[]) {
     this.handlers.push(...handlers);
   }
+
+  /**
+   * Send a message to the specified clients.
+   *
+   * @param clientIDs
+   * @param payload
+   */
+  abstract send(clientIDs: string[], payload: Payload);
 }

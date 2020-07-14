@@ -36,7 +36,7 @@ function removeFromCurrentRoom(user: User): Promise<void> {
 // HANDLING EVENTS
 //------------------------------------------------------------------------------
 
-roomEventHandler.on("RoomJoin", async (from, payload) => {
+roomEventHandler.on("RoomJoin", async (ctx, from, payload) => {
   const roomId = payload.data as string;
 
   try {
@@ -59,11 +59,21 @@ roomEventHandler.on("RoomJoin", async (from, payload) => {
   }
 });
 
-roomEventHandler.on("Close", async (from) => {
+roomEventHandler.on("Close", async (ctx, from) => {
   // If the user is connected to a room, remove them.
   if (onlineUsersRooms[from.id]) await removeFromCurrentRoom(from);
 });
 
-roomEventHandler.on("IceCandidate", (from, payload) => {
+roomEventHandler.on("IceCandidate", async (ctx, from, payload) => {
   console.log(payload);
+
+  try {
+    const room = await rooms.findById(onlineUsersRooms[from.id]);
+    const viewersIDs = room.viewers;
+    /*.filter((u) => u.id !== from.id)*/
+
+    console.log(viewersIDs);
+  } catch (e) {
+    console.error(e);
+  }
 });

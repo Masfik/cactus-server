@@ -1,4 +1,4 @@
-import { WebSocketService } from "./websocket.service";
+import { Payload, WebSocketService } from "./websocket.service";
 import { CactusEventEmitter } from "./events/cactus-events";
 import * as http from "http";
 import * as https from "https";
@@ -50,7 +50,7 @@ export class CactusWsService extends WebSocketService<
       this.clients[user._id] = clientSocket;
 
       // Emitting the Connection event (IP as payload)
-      this.emit("Connection", user, {
+      this.emit("Connection", this, user, {
         event: "Connection",
         data: req.socket.remoteAddress,
       });
@@ -62,7 +62,7 @@ export class CactusWsService extends WebSocketService<
       // Any form of data received from the client
       clientSocket.on("message", (message) => {
         const payload = JSON.parse(message);
-        this.emit(payload.event, user, payload);
+        this.emit(payload.event, this, user, payload);
       });
 
       //------------------------------------------------------------------------
@@ -72,7 +72,7 @@ export class CactusWsService extends WebSocketService<
       // When the client closes the connection
       clientSocket.on("close", () => {
         // Emitting the Close event
-        this.emit("Close", user, {
+        this.emit("Close", this, user, {
           event: "Close",
           data: req.socket.remoteAddress,
         });
@@ -82,5 +82,9 @@ export class CactusWsService extends WebSocketService<
         delete clientSocket.id;
       });
     });
+  }
+
+  send(clientIDs: string[], payload: Payload) {
+    clientIDs.forEach((id) => this.clients[id]?.send(JSON.stringify(payload)));
   }
 }
