@@ -10,12 +10,18 @@ type Clients<T> = {
   [id: string]: T;
 };
 
+type Payload = {
+  event: string;
+  data: object | string;
+};
+
 /**
  * A generic and simple WebSocket service based on events.
  * It can be used with the very minimal ws library or even Socket.IO.
  */
 export abstract class WebSocketService<T, U extends EventEmitter> {
   protected handlers: U[] = [];
+  // TODO: use a proper caching system (e.g. Redis)
   protected clients: Clients<T> = {};
 
   /**
@@ -31,7 +37,7 @@ export abstract class WebSocketService<T, U extends EventEmitter> {
    * @param from - The {@link User} who sent the WebSocket message.
    * @param payload - data received from the client.
    */
-  protected emit(event: string, from: User, payload) {
+  protected emit(event: string, from: User, payload: Payload) {
     this.handlers.forEach((handler) => handler.emit(event, from, payload));
   }
 

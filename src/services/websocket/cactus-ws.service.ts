@@ -31,6 +31,10 @@ export class CactusWsService extends WebSocketService<
     console.info("[WebSocket] WebSocket service started.");
     this.started = true;
 
+    //--------------------------------------------------------------------------
+    // CONNECTION: WHEN THE USER CONNECTS TO THE SOCKET
+    //--------------------------------------------------------------------------
+
     this.ws.on("connection", async (clientSocket, req) => {
       // TODO: The WebSocket service is coupled with the database (bad practice)
       const user: User | null = await users
@@ -45,10 +49,15 @@ export class CactusWsService extends WebSocketService<
       // Adding the current clientSocket to the list of connected clients
       this.clients[user._id] = clientSocket;
 
-      console.info(`[WebSocket] ${req.socket.remoteAddress} connected.`);
+      // Emitting the Connection event (IP as payload)
+      this.emit("Connection", user, {
+        event: "Connection",
+        data: req.socket.remoteAddress,
+      });
 
-      // Emitting the Connection event (no payload required)
-      this.emit("Connection", user, null);
+      //------------------------------------------------------------------------
+      // MESSAGE: ANY FORM OF DATA
+      //------------------------------------------------------------------------
 
       // Any form of data received from the client
       clientSocket.on("message", (message) => {
@@ -56,12 +65,17 @@ export class CactusWsService extends WebSocketService<
         this.emit(payload.event, user, payload);
       });
 
+      //------------------------------------------------------------------------
+      // CLOSE: WHEN THE USER DISCONNECTS
+      //------------------------------------------------------------------------
+
       // When the client closes the connection
       clientSocket.on("close", () => {
-        console.info(`[WebSocket] ${req.socket.remoteAddress} disconnected.`);
-
         // Emitting the Close event
-        this.emit("Close", user, null);
+        this.emit("Close", user, {
+          event: "Close",
+          data: req.socket.remoteAddress,
+        });
 
         // Removing the current clientSocket from the list of connected clients
         delete this.clients[clientSocket.id];
